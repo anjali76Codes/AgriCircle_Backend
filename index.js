@@ -20,12 +20,23 @@ const cropRoutes = require('./routes/cropRoutes'); // Import crop routes
 const app = express();
 const PORT = process.env.PORT || 3000; // Use port 3000 if specified in .env
 
-// Enable CORS for requests from frontend (React app)
+const allowedOrigins = [
+  'http://localhost:5173',
+  'https://agricircle.netlify.app'
+];
+
 app.use(cors({
-    origin: 'http://localhost:5173', // Ensure this matches your frontend port
-    methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE'],
-    credentials: true
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE'],
+  credentials: true
 }));
+
 
 // Middleware to parse incoming JSON requests
 app.use(express.json());
